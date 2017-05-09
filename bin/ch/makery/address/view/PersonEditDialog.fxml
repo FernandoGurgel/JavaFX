@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="246.0" prefWidth="389.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.makery.address.view.PersonEditDialogController">
+<AnchorPane prefHeight="315.0" prefWidth="443.0" styleClass="background" stylesheets="@DarkTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.makery.address.view.PersonEditDialogController">
    <children>
       <GridPane prefHeight="208.0" prefWidth="356.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
@@ -75,7 +75,7 @@
             </TextField>
             <HBox alignment="CENTER_RIGHT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                <children>
-                  <Button mnemonicParsing="false" onAction="#handleOk" text="Ok" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                  <Button defaultButton="true" mnemonicParsing="false" onAction="#handleOk" stylesheets="@DarkTheme.css" text="Ok" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                   <Button mnemonicParsing="false" onAction="#handleCancel" text="Cancelar" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                </children>
                <opaqueInsets>

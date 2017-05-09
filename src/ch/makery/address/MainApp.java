@@ -1,8 +1,15 @@
 package ch.makery.address;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.prefs.Preferences;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import ch.makery.address.model.Person;
+import ch.makery.address.model.PersonListWrapper;
 import ch.makery.address.view.PersonEditDialogController;
 import ch.makery.address.view.PersonOverviewController;
 import javafx.application.Application;
@@ -11,6 +18,9 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.print.PageOrientation;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
@@ -33,6 +43,9 @@ public class MainApp extends Application {
 	public void start(Stage primaryStage) {
 		this.primaryStage = primaryStage;
 		this.primaryStage.setTitle("AddressApp");
+		this.primaryStage.getIcons().add(new Image("file:resources/images/addressApp.png"));
+		
+		//this.primaryStage.titleProperty(false);
 		
 		iniRootLayout();
 		showPersonOverView();
@@ -85,6 +98,75 @@ public class MainApp extends Application {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
+		}
+	}
+	
+	public File getPersonFilePath(){
+		Preferences preferences = Preferences.userNodeForPackage(MainApp.class);
+		String string = preferences.get("filePath", null);
+		if(string != null){
+			return new File(string);
+		}else{
+			return null;
+		}
+	}
+	
+	public void setPersonFilePath(File file){
+		Preferences preferences = Preferences.userNodeForPackage(MainApp.class);
+		if(file != null){
+			preferences.put("filePath", file.getPath());
+			primaryStage.setTitle("AddressApp - "+file.getName());
+		}else{
+			preferences.remove("filePath");
+			primaryStage.setTitle("AddressApp");
+		}
+	}
+	
+	public void loadPersonDataFromFile(File file){
+		String erroMsg = "";
+		
+		try {
+			JAXBContext context = JAXBContext.newInstance(PersonListWrapper.class);
+			Unmarshaller um = context.createUnmarshaller();
+			
+			PersonListWrapper wrapper = (PersonListWrapper) um.unmarshal(file);
+			
+			personDate.clear();
+			personDate.addAll(wrapper.getPersons());
+			
+			setPersonFilePath(file);
+		} catch (Exception e) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText("Nao foi possivel salvar os dados do arquivo!");
+			alert.setContentText(erroMsg);
+			alert.showAndWait();
+			e.printStackTrace();
+		}
+	}
+	
+	public void savePersonDataFile(File file){
+		String string = "";
+		
+		try {
+			JAXBContext context = JAXBContext.newInstance(PersonListWrapper.class);
+			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			
+			PersonListWrapper wrapper = new PersonListWrapper();
+			wrapper.setPersons(personDate);
+			
+			m.marshal(personDate,file);
+			
+			setPersonFilePath(file);
+			
+		} catch (Exception e) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText("Nao foi possivel salvar os dados do arquivo!");
+			alert.setContentText(string);
+			alert.showAndWait();
+			e.printStackTrace();
 		}
 	}
 
